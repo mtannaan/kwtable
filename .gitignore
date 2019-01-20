@@ -24,3 +24,5 @@ kwtable-*.tar
 
 # VS Code extension
 /.elixir_ls
+
+.DS_Store
