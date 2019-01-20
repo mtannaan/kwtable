@@ -76,9 +76,11 @@ defmodule KWTable.Join do
 
     # check duplicate
     if opts[:raise_when_duplicate] do
-      ret |> Enum.each(fn row ->
+      ret
+      |> Enum.each(fn row ->
         cols = row |> Keyword.keys()
         dup_cols = (cols -- Enum.uniq(cols)) |> Enum.uniq()
+
         if length(dup_cols) > 0 do
           raise "duplicate columns: #{inspect(dup_cols)}"
         end

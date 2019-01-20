@@ -59,19 +59,21 @@ defmodule JoinTest do
   end
 
   test "one-to-many inner join" do
-    assert KWTable.Join.inner(@t1, @t4, on: :a, delete_right_key: true, validation: :one_to_many) == [
-             [a: 1, b: 2, c: 22],
-             [a: 1, b: 2, c: 23],
-             [a: 2, b: 4, c: 4]
-           ]
+    assert KWTable.Join.inner(@t1, @t4, on: :a, delete_right_key: true, validation: :one_to_many) ==
+             [
+               [a: 1, b: 2, c: 22],
+               [a: 1, b: 2, c: 23],
+               [a: 2, b: 4, c: 4]
+             ]
   end
 
   test "many-to-one inner join" do
-    assert KWTable.Join.inner(@t3, @t2, on: :a, delete_right_key: true, validation: :many_to_one) == [
-             [a: 1, b: 2, c: 3],
-             [a: 1, b: 12, c: 3],
-             [a: 2, b: 4, c: 5]
-           ]
+    assert KWTable.Join.inner(@t3, @t2, on: :a, delete_right_key: true, validation: :many_to_one) ==
+             [
+               [a: 1, b: 2, c: 3],
+               [a: 1, b: 12, c: 3],
+               [a: 2, b: 4, c: 5]
+             ]
   end
 
   test "many-to-many inner join" do
@@ -102,7 +104,11 @@ defmodule JoinTest do
   end
 
   test "multiple keys - different name" do
-    assert KWTable.Join.inner(@u1, @u2_2, on_left: [:a, :b], on_right: [:a2, :b], validation: :one_to_one) ==
+    assert KWTable.Join.inner(@u1, @u2_2,
+             on_left: [:a, :b],
+             on_right: [:a2, :b],
+             validation: :one_to_one
+           ) ==
              [
                [a: 1, b: 1, c: 3, a2: 1, b: 1, d: 13],
                [a: 1, b: 2, c: 4, a2: 1, b: 2, d: 14],
@@ -157,13 +163,15 @@ defmodule JoinTest do
     assert_raise(
       RuntimeError,
       "duplicate columns: [:a]",
-      fn -> KWTable.Join.inner(@t1, @t2, on: :a, raise_when_duplicate: true) |> IO.inspect end
+      fn -> KWTable.Join.inner(@t1, @t2, on: :a, raise_when_duplicate: true) |> IO.inspect() end
     )
 
     assert_raise(
       RuntimeError,
       "duplicate columns: [:b, :c]",
-      fn -> KWTable.Join.inner(@u1, @u1, on: :a, raise_when_duplicate: true, delete_right_key: true) end
+      fn ->
+        KWTable.Join.inner(@u1, @u1, on: :a, raise_when_duplicate: true, delete_right_key: true)
+      end
     )
   end
 end
