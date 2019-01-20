@@ -2,7 +2,7 @@
 
 Manipulates keyword list-based tables.
 
-A table like:
+A table:
 
 | a  | b |
 | ------------- | ------------- |
