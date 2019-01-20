@@ -1,4 +1,4 @@
-defmodule Kwtable.MixProject do
+defmodule KWtable.MixProject do
   use Mix.Project
 
   def project do
