@@ -184,6 +184,26 @@ defmodule KWTable do
   end
 
   @doc """
+  Group by specified columns.
+  Returns list of {key cols, corresponding rows} tuples.
+
+  ## Examples
+    iex> KWTable.groupby([[a: 1, b: 2, c: 3], [a: 1, b: 4, c: 9], [a: 5, b: 6, c: 1]], :a)
+    [{[a: 1], [[b: 2, c: 3], [b: 4, c: 9]]}, {[a: 5], [[b: 6, c: 1]]}]
+  """
+  def groupby(table, by) do
+    by = List.wrap(by)
+    table |> Enum.reduce([], &update_groups(&1, &2, by))
+  end
+
+  defp update_groups(row, groups, by) do
+    key = Keyword.take(row, by)
+    rest = Keyword.drop(row, by)
+    {^key, rows} = List.keyfind(groups, key, 0, {key, []})
+    List.keystore(groups, key, 0, {key, rows ++ [rest]})
+  end
+
+  @doc """
   converts table to an `Elixlsx.Sheet` struct
   """
   @spec to_sheet(t, sheet_opts) :: Elixlsx.Sheet.t()

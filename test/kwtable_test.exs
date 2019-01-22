@@ -1,6 +1,7 @@
 defmodule KWTableTest do
   use ExUnit.Case
   doctest KWTable
+  doctest KWTable.Groupby
 
   import KWTable.Samples
 
