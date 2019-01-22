@@ -204,6 +204,23 @@ defmodule KWTable do
   end
 
   @doc """
+  Map specified column by given function and put to potentially new column.
+
+  ## Examples
+    iex> KWTable.map([[a: 1, b: 2], [a: 3, b: 4]], :b, :b, &(&1 * 2))
+    [[a: 1, b: 4], [a: 3, b: 8]]
+    iex> KWTable.map([[a: 1, b: 2], [a: 3, b: 4]], :b, :c, &(&1 * 2))
+    [[a: 1, b: 2, c: 4], [a: 3, b: 4, c: 8]]
+  """
+  def map(table, from_key, to_key, fun, fillna \\ nil) do
+    table
+    |> Enum.map(fn row ->
+      value = Keyword.get(row, from_key, fillna)
+      Keyword.delete(row, to_key) ++ [{to_key, fun.(value)}]
+    end)
+  end
+
+  @doc """
   converts table to an `Elixlsx.Sheet` struct
   """
   @spec to_sheet(t, sheet_opts) :: Elixlsx.Sheet.t()
