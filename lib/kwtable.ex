@@ -99,6 +99,65 @@ defmodule KWTable do
     table |> Enum.dedup_by(&Keyword.keys/1) |> length() |> (fn x -> x in [0, 1] end).()
   end
 
+  @spec column_keys(t) :: [atom()]
+  def column_keys(table) do
+    table
+    |> Stream.concat()
+    |> Stream.map(fn {k, _v} -> k end)
+    |> Enum.uniq()
+  end
+
+  @doc """
+  values of a single column
+
+  ## Examples
+    iex> KWTable.column([[a: 1, b: 2], [a: 3, b: 4]], :a)
+    [1, 3]
+
+    iex> KWTable.column([[a: 1, b: 2], [b: 4]], :a, 9999)
+    [1, 9999]
+
+    iex> KWTable.column([[a: 1, b: 2], [b: 4]], :c)
+    [nil, nil]
+  """
+  def column(table, col_key, fillna \\ nil) do
+    table
+    |> Enum.map(fn row -> Keyword.get(row, col_key, fillna) end)
+  end
+
+  @doc """
+  Select columns
+
+  ## Examples
+    iex> KWTable.select_columns([[a: 1, b: 2], [b: 4]], [:a], 9999)
+    [[a: 1], [a: 9999]]
+  """
+  def select_columns(table, col_keys, fillna \\ nil) do
+    table
+    |> Enum.map(fn row ->
+      Enum.map(col_keys, fn key ->
+        {key, Keyword.get(row, key, fillna)}
+      end)
+    end)
+  end
+
+  @doc """
+  Transform row-based (default) table to column-based one.
+
+  ## Examples
+    iex> KWTable.to_colbased([[a: 1, b: 2], [a: 3, b: 4], [a: 5, b: 6]])
+    [a: [1, 3, 5], b: [2, 4, 6]]
+
+    iex> KWTable.to_colbased([[a: 1, b: 2], [b: 4], [a: 5, b: 6]], 9999)
+    [a: [1, 9999, 5], b: [2, 4, 6]]
+  """
+  def to_colbased(table, fillna \\ nil) do
+    column_keys(table)
+    |> Enum.map(fn key ->
+      {key, Enum.map(table, fn row -> Keyword.get(row, key, fillna) end)}
+    end)
+  end
+
   @doc """
   Transforms keyword-based table to list-based,
   whose first row is a header containing column names.
